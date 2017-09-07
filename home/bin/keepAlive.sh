@@ -3,7 +3,8 @@
 ## TomAshley303's process keepalive script for Linux. I have modified this to
 ## work with the squid-cache proxy server. Only need to set the process name
 ## to watch for and name of this script. Modify pgrep if not matching to your
-## process's needs.
+## process's needs. Best to run with something like this:
+## nohup sh keepAlive.sh > /dev/null 2>&1 &
 
 # name of the daemon to watch
 pname=squid
@@ -36,17 +37,17 @@ echo "$me watching $pname[$pid]"
 # endless loop
 while :
 do
- sleep 30
- if [ \! -d /proc/$pid ]; then
-  echo "`date` $me $pid is gone!"
-  sleep 1
-  echo "starting $pname"
-  date
-  eval $pstart
-  sleep 3
-  # renew the pid variables
-  pid=`pgrep $zopt -x $pname`
-  [ -n "$pid" ] || exec echo "no $pname process - exiting"
-  echo "$me watching $pname[$pid]"
- fi
-done
+    sleep 30
+    if [ \! -d /proc/$pid ]; then
+        echo "`date` $me $pid is gone!"
+        sleep 1
+        echo "starting $pname"
+        date
+        eval $pstart
+        sleep 3
+        # renew the pid variables
+        pid=`pgrep $zopt -x $pname`
+        [ -n "$pid" ] || exec echo "no $pname process - exiting"
+        echo "$me watching $pname[$pid]"
+    fi
+done 
